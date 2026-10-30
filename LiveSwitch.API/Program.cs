@@ -36,8 +36,12 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICallService, CallService>();
 builder.Services.AddSingleton<ILiveSwitchTokenService, LiveSwitchTokenService>();
 
-// 4. Add SignalR
-builder.Services.AddSignalR();
+// 4. Add SignalR with JSON String Enums
+builder.Services.AddSignalR()
+    .AddJsonProtocol(options =>
+    {
+        options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 // 5. Add Authentication & JWT
 builder.Services.AddAuthentication(options =>
