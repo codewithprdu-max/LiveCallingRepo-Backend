@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="LiveSwitch.API.Tests/LiveSwitch.API.Tests.csproj" />
+  <Project Path="LiveSwitch.API/LiveSwitch.API.csproj" />
+</Solution>

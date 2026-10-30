@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/LiveSwitch.API/bin/Debug/net10.0
+/LiveSwitch.API.Tests/bin
+/LiveSwitch.API.Tests/obj/Debug/net10.0
+/LiveSwitch.API.Tests/obj
+/LiveSwitch.API/obj
