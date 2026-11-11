@@ -8,3 +8,5 @@
 /LiveSwitch.API.Tests/obj/Debug/net10.0
 /LiveSwitch.API.Tests/obj
 /LiveSwitch.API/obj
+config.bat
+node_modules
