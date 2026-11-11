@@ -89,12 +89,23 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins(
-            "http://localhost:5173",
-            "http://localhost:3000",
-            "http://127.0.0.1:5173",
-            "http://127.0.0.1:3000"
-        )
+        policy.SetIsOriginAllowed(origin =>
+        {
+            if (string.IsNullOrEmpty(origin)) return false;
+            try
+            {
+                var uri = new Uri(origin);
+                return uri.Host == "localhost" ||
+                       uri.Host == "127.0.0.1" ||
+                       uri.Host.StartsWith("192.168.") ||
+                       uri.Host.StartsWith("10.") ||
+                       uri.Host.StartsWith("172.");
+            }
+            catch
+            {
+                return false;
+            }
+        })
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials();
