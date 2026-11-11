@@ -118,3 +118,22 @@ public class LiveSwitchConfigDto
     public string ApplicationId { get; set; } = string.Empty;
     public string GatewayUrl { get; set; } = string.Empty;
 }
+
+public class CallMessageDto
+{
+    public string Id { get; set; } = Guid.NewGuid().ToString("N");
+    public string CallId { get; set; } = string.Empty;
+    public string SenderUserId { get; set; } = string.Empty;
+    public string SenderDisplayName { get; set; } = string.Empty;
+    public string SenderAvatarUrl { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
+    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+}
+
+public class MediaStateUpdateDto
+{
+    public string UserId { get; set; } = string.Empty;
+    public bool IsAudioMuted { get; set; }
+    public bool IsVideoMuted { get; set; }
+    public bool IsScreenSharing { get; set; }
+}
