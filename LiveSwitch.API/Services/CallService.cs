@@ -189,15 +189,19 @@ public class CallService : ICallService
             participant.LeftAt = DateTime.UtcNow;
         }
 
-        // Check if all participants left or host left
+        // Check if all participants left or host left or 1-on-1 call participant left
         var activeParticipants = call.Participants.Count(p => p.Status == ParticipantStatus.Joined);
-        if (activeParticipants == 0 || (participant?.Role == ParticipantRole.Host && call.CallType != CallType.Group))
+        if (activeParticipants == 0 || call.CallType != CallType.Group || (participant?.Role == ParticipantRole.Host))
         {
             call.Status = CallStatus.Ended;
             call.EndedAt = DateTime.UtcNow;
             if (call.StartedAt.HasValue)
             {
                 call.DurationSeconds = (int)(call.EndedAt.Value - call.StartedAt.Value).TotalSeconds;
+            }
+            else
+            {
+                call.DurationSeconds = 0;
             }
         }
 
@@ -210,6 +214,20 @@ public class CallService : ICallService
             UserId = userId,
             Call = callDto
         });
+
+        // Broadcast CallEnded to both parties if the call has ended
+        if (call.Status == CallStatus.Ended)
+        {
+            await _hubContext.Clients.Group($"call_{callId}").SendAsync("CallEnded", callDto);
+            foreach (var p in call.Participants)
+            {
+                var conns = CallHub.GetUserConnections(p.UserId);
+                if (conns.Count > 0)
+                {
+                    await _hubContext.Clients.Clients(conns).SendAsync("CallEnded", callDto);
+                }
+            }
+        }
 
         _logger.LogInformation("User {UserId} left call {CallId}", userId, callId);
         return callDto;
@@ -273,7 +291,7 @@ public class CallService : ICallService
             call.DurationSeconds = 0;
         }
 
-        foreach (var p in call.Participants.Where(p => p.Status == ParticipantStatus.Joined))
+        foreach (var p in call.Participants.Where(p => p.Status == ParticipantStatus.Joined || p.Status == ParticipantStatus.Invited))
         {
             p.Status = ParticipantStatus.Left;
             p.LeftAt = DateTime.UtcNow;
